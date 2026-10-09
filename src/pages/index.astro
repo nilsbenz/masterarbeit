@@ -1,19 +1,49 @@
 ---
-import Layout from "@/layouts/main.astro"
-import { Button } from "@/components/ui/button"
+import Logo from "@/assets/logo.svg?react";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import Layout from "@/layouts/main.astro";
+import { getCollection } from "astro:content";
+
+const lessonsCollection = await getCollection("lessons");
+const lessons = lessonsCollection
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((lesson) => ({
+    title: lesson.data.title,
+    description: lesson.data.description,
+    slug: lesson.data.slug,
+  }));
 ---
 
-<Layout>
-  <div class="flex min-h-svh p-6">
-    <div class="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-      <div>
-        <h1 class="font-medium">Project ready!</h1>
-        <p>You may now add components and start building.</p>
-        <p>We've already added the button component for you.</p>
-        <Button client:load className="mt-2">
-          Button
-        </Button>
-      </div>
+<Layout sidebarOpen={false}>
+  <div class="space-y-8">
+    <h1 class="font-heading text-4xl font-semibold flex justify-center gap-2 items-center sm:py-4">
+      <Logo className="size-9 text-primary" />
+      KI Dojo
+    </h1>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {lessons.map((lesson, index) => (
+        <a
+          href={lesson.slug}
+          class="focus:outline-none focus-visible:ring-3 focus-visible:ring-ring/30 rounded-4xl"
+        >
+          <Card className="hover:bg-accent/50 transition-colors">
+            <CardHeader>
+              <CardTitle>
+                <span class="text-muted-foreground tabular-nums">
+                  {index + 1}.{" "}
+                </span>
+                {lesson.title}
+              </CardTitle>
+              <CardDescription>{lesson.description}</CardDescription>
+            </CardHeader>
+          </Card>
+        </a>
+      ))}
     </div>
   </div>
 </Layout>

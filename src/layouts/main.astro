@@ -1,15 +1,92 @@
 ---
-import "@/styles/global.css"
+import SidebarLayout from "@/components/sidebar-layout";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import "@/styles/global.css";
+import { getCollection } from "astro:content";
+import { ClientRouter } from "astro:transitions";
+
+interface Props {
+  sidebarOpen: boolean;
+}
+
+const lessonsCollection = await getCollection("lessons");
+const lessons = lessonsCollection
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((lesson) => ({
+    title: lesson.data.title,
+    slug: lesson.data.slug,
+  }));
+const { sidebarOpen } = Astro.props as Props;
+
+const anim = {
+  old: {
+    name: "fade-out",
+    duration: "0.25s",
+    easing: "ease-in-out",
+  },
+  new: {
+    name: "fade-in",
+    duration: "0.25s",
+    easing: "ease-out",
+    delay: ".15s",
+  },
+};
+
+const customTransition = {
+  forwards: anim,
+  backwards: anim,
+};
 ---
 
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Astro App</title>
+    <title>KI Dojo</title>
+    <ClientRouter />
   </head>
   <body>
-    <slot />
+    <TooltipProvider>
+      <SidebarLayout
+        client:load
+        lessons={lessons}
+        sidebarOpen={sidebarOpen}
+        currentPathname={Astro.originPathname}
+      >
+        <div
+          class="mx-auto flex w-full max-w-2xl grow flex-col"
+          transition:animate={customTransition}
+          transition:name={Astro.originPathname === "/" ? undefined : "content"}
+        >
+          <slot />
+        </div>
+      </SidebarLayout>
+    </TooltipProvider>
   </body>
 </html>
+
+<style is:global>
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+      transform: translateY(24px);
+      filter: blur(8px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+  @keyframes fade-out {
+    0% {
+      opacity: 1;
+      filter: blur(0);
+    }
+    100% {
+      opacity: 0;
+      filter: blur(2px);
+    }
+  }
+</style>

@@ -1,0 +1,31 @@
+---
+import Layout from "@/layouts/main.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const lessons = await getCollection("lessons");
+  return lessons
+    .sort((a, b) => a.data.order - b.data.order)
+    .map((lesson, index) => ({
+      params: { lesson: lesson.data.slug },
+      props: { lesson, index },
+    }));
+}
+
+const { lesson, index } = Astro.props;
+const { Content } = await render(lesson);
+---
+
+<Layout sidebarOpen>
+  <div class="space-y-8">
+    <div class="flex items-baseline gap-2">
+      <p class="bg-primary text-lg font-heading font-medium size-8 aspect-square flex items-center justify-center text-primary-foreground tabular-nums rounded-sm">
+        {index + 1}.
+      </p>
+      <h1 class="font-heading text-3xl font-medium">{lesson.data.title}</h1>
+    </div>
+    <article class="typeset">
+      <Content />
+    </article>
+  </div>
+</Layout>

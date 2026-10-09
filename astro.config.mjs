@@ -1,13 +1,23 @@
 // @ts-check
 
-import tailwindcss from "@tailwindcss/vite"
-import { defineConfig } from "astro/config"
-import react from "@astrojs/react"
+import mdx from "@astrojs/mdx";
+import react from "@astrojs/react";
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "astro/config";
+import svgr from "vite-plugin-svgr";
 
 // https://astro.build/config
 export default defineConfig({
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss(), svgr()],
   },
-  integrations: [react()],
-})
+  markdown: {
+    shikiConfig: {
+      theme: "one-light",
+    },
+  },
+  prefetch: {
+    prefetchAll: true,
+  },
+  integrations: [react(), mdx()],
+});
