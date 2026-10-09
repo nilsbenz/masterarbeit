@@ -49,7 +49,7 @@ export function AppSidebar({
               <SidebarMenuItem key={index}>
                 <SidebarMenuButton
                   tooltip={item.title}
-                  render={<a href={item.slug} />}
+                  render={<a href={`/${item.slug}`} />}
                   className="items-baseline"
                   isActive={
                     currentPathname.replace(/^\/+|\/+$/g, "") === item.slug

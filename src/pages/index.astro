@@ -28,7 +28,7 @@ const lessons = lessonsCollection
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {lessons.map((lesson, index) => (
         <a
-          href={lesson.slug}
+          href={`/${lesson.slug}`}
           class="focus:outline-none focus-visible:ring-3 focus-visible:ring-ring/30 rounded-4xl"
         >
           <Card className="hover:bg-accent/50 transition-colors">
