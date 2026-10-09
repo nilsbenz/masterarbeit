@@ -126,7 +126,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-sidebar text-foreground;
+    @apply bg-background text-foreground md:bg-sidebar;
     font-variant-ligatures: no-contextual;
   }
   button:not(:disabled),

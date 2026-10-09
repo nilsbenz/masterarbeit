@@ -1,6 +1,7 @@
 "use client";
 
 import { AppSidebar } from "./app-sidebar";
+import BottomNav from "./bottom-nav";
 import { SidebarInset, SidebarProvider } from "./ui/sidebar";
 
 export default function SidebarLayout({
@@ -17,7 +18,16 @@ export default function SidebarLayout({
   return (
     <SidebarProvider defaultOpen={sidebarOpen}>
       <AppSidebar lessons={lessons} currentPathname={currentPathname} />
-      <SidebarInset className="px-4 py-8">{children}</SidebarInset>
+      <SidebarInset className="px-4 py-8">
+        {children}
+        <BottomNav
+          lesson={lessons.find(
+            (lesson) =>
+              lesson.slug === currentPathname.replace(/^\/+|\/+$/g, "")
+          )}
+          lessons={lessons}
+        />
+      </SidebarInset>
     </SidebarProvider>
   );
 }
