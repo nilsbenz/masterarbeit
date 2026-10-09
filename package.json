@@ -13,7 +13,8 @@
     "astro": "astro",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{ts,tsx,astro}\"",
-    "typecheck": "astro check"
+    "typecheck": "astro check",
+    "generate-pwa-assets": "pwa-assets-generator"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "^0.4.3",
@@ -39,6 +40,8 @@
   "devDependencies": {
     "@astrojs/check": "^0.9",
     "@eslint/js": "^10",
+    "@vite-pwa/assets-generator": "^2.0.0",
+    "@vite-pwa/astro": "^1.2.0",
     "eslint": "^10",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.7",
@@ -48,6 +51,8 @@
     "prettier-plugin-tailwindcss": "^0.8.1",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8",
-    "vite-plugin-svgr": "^5.2.0"
+    "vite-plugin-pwa": "^1.2.0",
+    "vite-plugin-svgr": "^5.2.0",
+    "workbox-window": "^7.4.1"
   }
 }
