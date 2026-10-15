@@ -5,3 +5,5 @@ allowBuilds:
   sharp: true
   msw: false
   workerd: true
+  onnxruntime-node: true
+  protobufjs: true
