@@ -27,11 +27,12 @@
   --border: oklch(0.923 0.003 48.717);
   --input: oklch(0.923 0.003 48.717);
   --ring: oklch(0.709 0.01 56.259);
-  --chart-1: oklch(0.879 0.169 91.605);
-  --chart-2: oklch(0.769 0.188 70.08);
-  --chart-3: oklch(0.666 0.179 58.318);
-  --chart-4: oklch(0.555 0.163 48.998);
-  --chart-5: oklch(0.473 0.137 46.201);
+  --chart-1: oklch(0.62 0.16 250);
+  --chart-2: oklch(0.64 0.18 30);
+  --chart-3: oklch(0.68 0.15 150);
+  --chart-4: oklch(0.62 0.16 320);
+  --chart-5: oklch(0.72 0.15 90);
+  --chart-6: oklch(0.6 0.14 200);
   --radius: 0.625rem;
   --sidebar: oklch(0.985 0.001 106.423);
   --sidebar-foreground: oklch(0.147 0.004 49.25);
@@ -62,11 +63,12 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.553 0.013 58.071);
-  --chart-1: oklch(0.879 0.169 91.605);
-  --chart-2: oklch(0.769 0.188 70.08);
-  --chart-3: oklch(0.666 0.179 58.318);
-  --chart-4: oklch(0.555 0.163 48.998);
-  --chart-5: oklch(0.473 0.137 46.201);
+  --chart-1: oklch(0.62 0.16 250);
+  --chart-2: oklch(0.64 0.18 30);
+  --chart-3: oklch(0.68 0.15 150);
+  --chart-4: oklch(0.62 0.16 320);
+  --chart-5: oklch(0.72 0.15 90);
+  --chart-6: oklch(0.6 0.14 200);
   --sidebar: oklch(0.216 0.006 56.043);
   --sidebar-foreground: oklch(0.985 0.001 106.423);
   --sidebar-primary: oklch(0.769 0.188 70.08);
@@ -89,6 +91,7 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+  --color-chart-6: var(--chart-6);
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
@@ -135,5 +138,54 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+@layer components {
+  @keyframes pca-blob-float {
+    0%,
+    100% {
+      transform: translateY(0) scale(1);
+    }
+    50% {
+      transform: translateY(-10px) scale(1.06);
+    }
+  }
+
+  @keyframes pca-blob-in {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .pca-node {
+    transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .pca-blob-enter {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pca-blob-in 450ms ease-out both;
+  }
+
+  .pca-blob {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pca-blob-float 6s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pca-node {
+      transition: none;
+    }
+    .pca-blob-enter,
+    .pca-blob {
+      animation: none;
+    }
   }
 }
