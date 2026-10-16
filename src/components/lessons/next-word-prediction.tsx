@@ -115,7 +115,7 @@ export default function NextWordPrediction() {
   const overallProgress = totalBytes > 0 ? (loadedBytes / totalBytes) * 100 : 0;
 
   return (
-    <Card>
+    <Card className="not-typeset my-8">
       <CardHeader>
         <CardTitle>Nächste-Wort-Vorhersage</CardTitle>
         <CardDescription>

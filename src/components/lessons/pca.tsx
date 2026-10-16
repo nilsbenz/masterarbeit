@@ -54,6 +54,7 @@ export default function PrincipalComponentAnalysis() {
 
     function onMessage(event: MessageEvent<PcaResponse>) {
       const message = event.data;
+      console.log({ message });
       switch (message.status) {
         case "progress": {
           const info = message.info;
@@ -198,7 +199,7 @@ export default function PrincipalComponentAnalysis() {
   const overallProgress = totalBytes > 0 ? (loadedBytes / totalBytes) * 100 : 0;
 
   return (
-    <Card>
+    <Card className="not-typeset my-8">
       <CardHeader>
         <CardTitle>PCA</CardTitle>
         <CardDescription>
@@ -251,118 +252,100 @@ export default function PrincipalComponentAnalysis() {
           )}
 
           {layout.length > 0 ? (
-            <svg
-              viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
-              className="w-full"
-              role="group"
-              aria-label="PCA-Diagramm der Wörter"
-            >
-              <text
-                x={VIEW_WIDTH / 2}
-                y={VIEW_HEIGHT - 16}
-                textAnchor="middle"
-                className="text-[13px] text-muted-foreground"
-                style={{ fill: "var(--muted-foreground)" }}
+            <div className="relative">
+              <svg
+                viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
+                className="w-full"
+                role="group"
+                aria-label="PCA-Diagramm der Wörter"
               >
-                Dimension 1
-              </text>
-              <text
-                x={20}
-                y={VIEW_HEIGHT / 2}
-                textAnchor="middle"
-                className="text-[13px] text-muted-foreground"
-                style={{ fill: "var(--muted-foreground)" }}
-                transform={`rotate(-90 20 ${VIEW_HEIGHT / 2})`}
-              >
-                Dimension 2
-              </text>
-              <g aria-hidden="true">
-                {Array.from({ length: GRID_DIVISIONS + 1 }, (_, index) => {
-                  const ratio = index / GRID_DIVISIONS;
-                  const x = PADDING + ratio * (VIEW_WIDTH - 2 * PADDING);
-                  const y = PADDING + ratio * (VIEW_HEIGHT - 2 * PADDING);
+                <g aria-hidden="true">
+                  {Array.from({ length: GRID_DIVISIONS + 1 }, (_, index) => {
+                    const ratio = index / GRID_DIVISIONS;
+                    const x = PADDING + ratio * (VIEW_WIDTH - 2 * PADDING);
+                    const y = PADDING + ratio * (VIEW_HEIGHT - 2 * PADDING);
+                    return (
+                      <g key={index}>
+                        <line
+                          x1={x}
+                          y1={PADDING}
+                          x2={x}
+                          y2={VIEW_HEIGHT - PADDING}
+                          stroke="var(--border)"
+                          strokeWidth={1}
+                          shapeRendering="crispEdges"
+                        />
+                        <line
+                          x1={PADDING}
+                          y1={y}
+                          x2={VIEW_WIDTH - PADDING}
+                          y2={y}
+                          stroke="var(--border)"
+                          strokeWidth={1}
+                          shapeRendering="crispEdges"
+                        />
+                      </g>
+                    );
+                  })}
+                </g>
+              </svg>
+              <div className="pointer-events-none absolute inset-0">
+                <p className="absolute bottom-0 left-1/2 -translate-x-1/2 text-sm text-muted-foreground">
+                  Dimension 1
+                </p>
+                <p className="absolute top-1/2 left-2 origin-left translate-y-full -rotate-90 text-sm text-muted-foreground">
+                  Dimension 2
+                </p>
+                {layout.map((point) => {
+                  const seed = hashWord(point.word);
+                  const color = `var(--chart-${(seed % COLOR_COUNT) + 1})`;
                   return (
-                    <g key={index}>
-                      <line
-                        x1={x}
-                        y1={PADDING}
-                        x2={x}
-                        y2={VIEW_HEIGHT - PADDING}
-                        stroke="var(--border)"
-                        strokeWidth={1}
-                        shapeRendering="crispEdges"
-                      />
-                      <line
-                        x1={PADDING}
-                        y1={y}
-                        x2={VIEW_WIDTH - PADDING}
-                        y2={y}
-                        stroke="var(--border)"
-                        strokeWidth={1}
-                        shapeRendering="crispEdges"
-                      />
-                    </g>
+                    <div
+                      key={point.word}
+                      className="pca-node absolute"
+                      style={{
+                        left: `${(point.cx / VIEW_WIDTH) * 100}%`,
+                        top: `${(point.cy / VIEW_HEIGHT) * 100}%`,
+                        transform: "translate(-50%, -50%)",
+                      }}
+                    >
+                      <div className="pca-blob-enter">
+                        <div
+                          className="pca-blob"
+                          style={{
+                            animationDuration: `${5 + (seed % 5)}s`,
+                            animationDelay: `${-(seed % 7)}s`,
+                          }}
+                        >
+                          <button
+                            type="button"
+                            className="group pointer-events-auto relative cursor-pointer overflow-clip rounded-full border px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                            style={{
+                              color,
+                              backgroundColor: `color-mix(in oklab, ${color} 15%, var(--card))`,
+                              borderColor: `color-mix(in oklab, ${color} 40%, var(--card))`,
+                              boxShadow: `0 0 20px -8px ${color}`,
+                            }}
+                            onClick={() => removeWord(point.word)}
+                            aria-label={`${point.word} entfernen`}
+                          >
+                            {point.word}
+                            <span
+                              className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
+                              style={{
+                                backgroundColor: `color-mix(in oklab, ${color} 15%, var(--card))`,
+                              }}
+                            >
+                              <IconTrash className="size-5" />
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   );
                 })}
-              </g>
-              {layout.map((point) => {
-                const seed = hashWord(point.word);
-                const color = `var(--chart-${(seed % COLOR_COUNT) + 1})`;
-                return (
-                  <g
-                    key={point.word}
-                    className="pca-node"
-                    style={{
-                      transform: `translate(${point.cx}px, ${point.cy}px)`,
-                    }}
-                  >
-                    <g className="pca-blob-enter">
-                      <g
-                        className="pca-blob"
-                        style={{
-                          animationDuration: `${5 + (seed % 5)}s`,
-                          animationDelay: `${-(seed % 7)}s`,
-                        }}
-                      >
-                        <foreignObject
-                          x={-200}
-                          y={-40}
-                          width={400}
-                          height={80}
-                          overflow="visible"
-                          style={{ pointerEvents: "none" }}
-                        >
-                          <div className="flex h-full w-full items-center justify-center">
-                            <button
-                              type="button"
-                              className="group pointer-events-auto relative cursor-pointer overflow-clip rounded-full border px-3 py-1 text-[15px] font-medium whitespace-nowrap transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-                              style={{
-                                color,
-                                backgroundColor: `color-mix(in oklab, ${color} 15%, var(--card))`,
-                                borderColor: `color-mix(in oklab, ${color} 40%, var(--card))`,
-                                boxShadow: `0 0 20px -8px ${color}`,
-                              }}
-                              onClick={() => removeWord(point.word)}
-                              aria-label={`${point.word} entfernen`}
-                            >
-                              {point.word}
-                              <span
-                                className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
-                                style={{
-                                  backgroundColor: `color-mix(in oklab, ${color} 15%, var(--card))`,
-                                }}
-                              >
-                                <IconTrash className="size-5" />
-                              </span>
-                            </button>
-                          </div>
-                        </foreignObject>
-                      </g>
-                    </g>
-                  </g>
-                );
-              })}
-            </svg>
+              </div>
+            </div>
           ) : (
             !busy && (
               <p className="py-16 text-center text-sm text-muted-foreground">
@@ -396,7 +379,7 @@ export default function PrincipalComponentAnalysis() {
                         opacity: 0.6 + 0.4 * (index / explained.length),
                       }}
                     >
-                      <p className="absolute top-1/2 left-1/2 mt-0 -translate-x-1/2 -translate-y-1/2 truncate text-xs font-medium text-card">
+                      <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 truncate text-xs font-medium text-card">
                         Dimension {index + 1}: {Math.round(width)} %
                       </p>
                     </div>

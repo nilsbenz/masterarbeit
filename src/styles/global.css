@@ -164,17 +164,17 @@
   }
 
   .pca-node {
-    transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition:
+      left 600ms cubic-bezier(0.22, 1, 0.36, 1),
+      top 600ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .pca-blob-enter {
-    transform-box: fill-box;
     transform-origin: center;
     animation: pca-blob-in 450ms ease-out both;
   }
 
   .pca-blob {
-    transform-box: fill-box;
     transform-origin: center;
     animation: pca-blob-float 6s ease-in-out infinite;
   }
