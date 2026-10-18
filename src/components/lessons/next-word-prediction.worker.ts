@@ -1,3 +1,4 @@
+import { detectDevice } from "@/lib/device";
 import {
   AutoModelForCausalLM,
   AutoTokenizer,
@@ -33,11 +34,13 @@ function load(
   tokenizerPromise ??= AutoTokenizer.from_pretrained(MODEL_ID, {
     progress_callback: onProgress,
   });
-  modelPromise ??= AutoModelForCausalLM.from_pretrained(MODEL_ID, {
-    dtype: "q4",
-    device: "webgpu",
-    progress_callback: onProgress,
-  });
+  modelPromise ??= detectDevice().then((selection) =>
+    AutoModelForCausalLM.from_pretrained(MODEL_ID, {
+      dtype: "q4",
+      device: selection.device,
+      progress_callback: onProgress,
+    })
+  );
   return Promise.all([tokenizerPromise, modelPromise]);
 }
 

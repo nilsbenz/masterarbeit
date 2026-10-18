@@ -54,7 +54,6 @@ export default function PrincipalComponentAnalysis() {
 
     function onMessage(event: MessageEvent<PcaResponse>) {
       const message = event.data;
-      console.log({ message });
       switch (message.status) {
         case "progress": {
           const info = message.info;

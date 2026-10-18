@@ -1,3 +1,4 @@
+import { detectDevice } from "@/lib/device";
 import {
   env,
   pipeline,
@@ -22,11 +23,13 @@ function post(message: PcaResponse) {
 }
 
 function load(onProgress: (info: ProgressInfo) => void) {
-  extractorPromise ??= pipeline("feature-extraction", MODEL_ID, {
-    dtype: "q8",
-    device: "wasm",
-    progress_callback: onProgress,
-  });
+  extractorPromise ??= detectDevice().then((selection) =>
+    pipeline("feature-extraction", MODEL_ID, {
+      dtype: "q8",
+      device: selection.device,
+      progress_callback: onProgress,
+    })
+  );
   return extractorPromise;
 }
 
